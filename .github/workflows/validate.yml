@@ -28,8 +28,13 @@ jobs:
           from pathlib import Path
           catalog = json.loads(Path("index.json").read_text())
           for entry in catalog["plugins"]:
-              name = f"releases/{entry['id']}-{entry['version']}.tar.gz"
-              if not Path(name).is_file():
-                  raise SystemExit(f"Missing release file: {name}")
-          print("All catalog tarballs present")
+              expected = f"{entry['id']}-{entry['version']}.tar.gz"
+              if not Path(f"releases/{expected}").is_file():
+                  raise SystemExit(f"Missing release file: releases/{expected}")
+              url = entry.get("tarball_url", "")
+              if not url.endswith(expected):
+                  raise SystemExit(
+                      f"tarball_url for {entry['id']!r} must end with {expected!r}, got {url!r}"
+                  )
+          print("All catalog tarballs present and URLs match")
           PY

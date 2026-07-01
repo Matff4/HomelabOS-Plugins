@@ -20,8 +20,8 @@ HomelabOS-Plugins/
 
 1. Create `plugins/<id>/` with `manifest.json`, widget HTML, optional `main.py` backend.
 2. Run `python scripts/build-release.py` (or `python scripts/build-release.py uptime`).
-3. Add an entry to `index.json` with the matching `releases/<id>-<version>.tar.gz` raw URL.
-4. Commit, push to `master`.
+   This builds `releases/<id>-<version>.tar.gz` and updates that plugin’s `version` + `tarball_url` in `index.json`.
+3. Commit `plugins/`, `releases/`, and `index.json`, then push to `master`.
 
 See HomelabOS [PLUGIN_AUTHOR.md](https://github.com/Matff4/HomelabOS/blob/master/docs/PLUGIN_AUTHOR.md) for manifest and SDK details.
 
