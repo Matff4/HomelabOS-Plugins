@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Uptime</title>
+  <style>
+    :root { color-scheme: dark; --accent: #89b4fa; --text: #cdd6f4; --muted: #a6adc8; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: system-ui, sans-serif;
+      background: transparent;
+      color: var(--text);
+    }
+    body { padding: 8px 10px; }
+    body[data-kiosk="true"] h2 { display: none; }
+    h2 { margin: 0 0 6px; font-size: 0.95rem; color: var(--accent); }
+    .uptime {
+      font-variant-numeric: tabular-nums;
+      font-size: 1.35rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+    .sub {
+      margin-top: 4px;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <h2 id="title">Uptime</h2>
+  <div class="uptime" id="uptime">—</div>
+  <div class="sub" id="sub">Waiting for stats…</div>
+  <script src="/sdk/homelabos-sdk.js"></script>
+  <script>
+    (function () {
+      function sdk() {
+        if (!window.HomelabOS) return null;
+        return typeof window.HomelabOS.getConfig === 'function'
+          ? window.HomelabOS
+          : window.HomelabOS.HomelabOS || null;
+      }
+
+      function formatUptime(seconds) {
+        var total = Math.max(0, Math.floor(Number(seconds) || 0));
+        var days = Math.floor(total / 86400);
+        var hours = Math.floor((total % 86400) / 3600);
+        var mins = Math.floor((total % 3600) / 60);
+        if (days > 0) return days + 'd ' + hours + 'h ' + mins + 'm';
+        if (hours > 0) return hours + 'h ' + mins + 'm';
+        return mins + 'm';
+      }
+
+      function boot() {
+        var titleEl = document.getElementById('title');
+        var uptimeEl = document.getElementById('uptime');
+        var subEl = document.getElementById('sub');
+        if (new URLSearchParams(location.search).get('kiosk') === 'true') {
+          document.body.dataset.kiosk = 'true';
+        }
+        var api = sdk();
+        if (!api) {
+          uptimeEl.textContent = 'SDK error';
+          return;
+        }
+        var cfg = api.getConfig();
+        if (cfg.title) titleEl.textContent = cfg.title;
+
+        api.subscribe('system.stats', function (data) {
+          uptimeEl.textContent = formatUptime(data.uptime_seconds);
+          subEl.textContent = 'Host uptime · CPU ' + Number(data.cpu_percent).toFixed(1) + '%';
+        });
+      }
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', boot);
+      } else {
+        boot();
+      }
+    })();
+  </script>
+</body>
+</html>

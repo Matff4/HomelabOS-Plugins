@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "updated_at": "2026-06-30T18:00:00+00:00",
+  "plugins": [
+    {
+      "id": "uptime",
+      "name": "Uptime",
+      "version": "1.0.0",
+      "description": "Large host uptime counter with live CPU hint from system stats.",
+      "icon": "schedule",
+      "tarball_url": "https://raw.githubusercontent.com/Matff4/HomelabOS-Plugins/master/releases/uptime-1.0.0.tar.gz",
+      "api_version": 1,
+      "homelabos_min": "1.0.0"
+    }
+  ]
+}
